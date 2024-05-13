@@ -14,6 +14,8 @@ import com.breezefieldsalesdemo.R
 import com.breezefieldsalesdemo.app.Pref
 import com.breezefieldsalesdemo.app.domain.AddShopDBModelEntity
 import com.breezefieldsalesdemo.app.utils.AppUtils
+import kotlinx.android.synthetic.main.inflate_registered_shops.view.add_order_ll
+import kotlinx.android.synthetic.main.inflate_registered_shops.view.direction_view
 import kotlinx.android.synthetic.main.row_call_log_list.view.tv_row_call_log_his_sync_status
 import kotlinx.android.synthetic.main.row_contact_list.view.iv_row_cont_list_cont_number
 import kotlinx.android.synthetic.main.row_contact_list.view.iv_row_cont_list_cont_number_email
@@ -33,6 +35,7 @@ import kotlinx.android.synthetic.main.row_contact_list.view.ll_goneView
 import kotlinx.android.synthetic.main.row_contact_list.view.ll_headView
 import kotlinx.android.synthetic.main.row_contact_list.view.ll_row_contact_addr_root
 import kotlinx.android.synthetic.main.row_contact_list.view.ll_row_contact_list_auto_activity
+import kotlinx.android.synthetic.main.row_contact_list.view.ll_row_contact_list_order_show
 import kotlinx.android.synthetic.main.row_contact_list.view.ll_row_contact_list_update_addr
 import kotlinx.android.synthetic.main.row_contact_list.view.ll_row_contact_list_will_activity_show
 import kotlinx.android.synthetic.main.row_contact_list.view.ll_row_contact_list_will_direction
@@ -86,8 +89,14 @@ class AdapterContactList(var mContext:Context,var shopL:ArrayList<AddShopDBModel
                 //Code start by Puja
                 // tv_row_cont_list_name_initial.text= shopL.get(adapterPosition).shopName!!.get(0).toString()
                 //Code end by Puja
+                println("shopname"+shopL.get(adapterPosition).shopName)
                 tv_row_cont_list_name.text = shopL.get(adapterPosition).shopName
-                tv_row_cont_list_addr.text = shopL.get(adapterPosition).address
+                if (shopL.get(adapterPosition).address.equals("NA") || shopL.get(adapterPosition).address.equals("")) {
+                    tv_row_cont_list_addr.text = ""
+                }else{
+                    tv_row_cont_list_addr.text = shopL.get(adapterPosition).address
+
+                }
                 tv_row_cont_list_cont_number.text = shopL.get(adapterPosition).ownerContactNumber
                 tv_row_cont_list_cont_numberNew.text = shopL.get(adapterPosition).ownerContactNumber
                 var added_date = shopL.get(adapterPosition).added_date.replace("T"," ").split(" ").get(0).toString()
@@ -120,10 +129,10 @@ class AdapterContactList(var mContext:Context,var shopL:ArrayList<AddShopDBModel
 
                 if(Pref.ContactAddresswithGeofence){
                     ll_row_contact_list_update_addr.visibility = View.VISIBLE
-                }else if(shopL.get(adapterPosition).crm_saved_from.equals("Phone Book")){
-                    ll_row_contact_list_update_addr.visibility = View.GONE
+                    ll_row_contact_list_will_direction.visibility = View.VISIBLE
                 }else{
-                    ll_row_contact_list_update_addr.visibility = View.VISIBLE
+                    ll_row_contact_list_update_addr.visibility = View.GONE
+                    ll_row_contact_list_will_direction.visibility = View.GONE
                 }
 
 
@@ -205,14 +214,16 @@ class AdapterContactList(var mContext:Context,var shopL:ArrayList<AddShopDBModel
                     listner.onInfoClick(shopL.get(adapterPosition))
                 }
                 ll_row_contact_addr_root.setOnClickListener {
-                    try{
-                        var intentGmap: Intent = Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=${shopL.get(adapterPosition).shopLat},${shopL.get(adapterPosition).shopLong}&mode=1"))
-                        intentGmap.setPackage("com.google.android.apps.maps")
-                        if(intentGmap.resolveActivity(mContext.packageManager) !=null){
-                            mContext.startActivity(intentGmap)
+                    if(Pref.ContactAddresswithGeofence){
+                        try{
+                            var intentGmap: Intent = Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=${shopL.get(adapterPosition).shopLat},${shopL.get(adapterPosition).shopLong}&mode=1"))
+                            intentGmap.setPackage("com.google.android.apps.maps")
+                            if(intentGmap.resolveActivity(mContext.packageManager) !=null){
+                                mContext.startActivity(intentGmap)
+                            }
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
                         }
-                    }catch (ex:Exception){
-                        ex.printStackTrace()
                     }
                 }
 
@@ -254,6 +265,17 @@ class AdapterContactList(var mContext:Context,var shopL:ArrayList<AddShopDBModel
                     listner.onAutoActivityClick(shopL.get(adapterPosition))
                 }
 
+                ll_row_contact_list_order_show.setOnClickListener {
+                    listner.onOrderClick(shopL.get(adapterPosition))
+                }
+
+                if (Pref.isOrderShow) {
+                    ll_row_contact_list_order_show.visibility = View.VISIBLE
+                } else {
+                    ll_row_contact_list_order_show.visibility = View.GONE
+                }
+
+
             }
         }
     }
@@ -271,6 +293,7 @@ class AdapterContactList(var mContext:Context,var shopL:ArrayList<AddShopDBModel
         fun onDirectionClick(obj:AddShopDBModelEntity)
         fun onActivityClick(obj:AddShopDBModelEntity)
         fun onUpdateAddrClick(obj:AddShopDBModelEntity)
+        fun onOrderClick(obj:AddShopDBModelEntity)
     }
 
 }

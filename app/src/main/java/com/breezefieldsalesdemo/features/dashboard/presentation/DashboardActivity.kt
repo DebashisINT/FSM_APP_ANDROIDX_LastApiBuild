@@ -39,7 +39,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -131,6 +130,7 @@ import com.breezefieldsalesdemo.features.commondialogsinglebtn.AddFeedbackSingle
 import com.breezefieldsalesdemo.features.commondialogsinglebtn.CommonDialogSingleBtn
 import com.breezefieldsalesdemo.features.commondialogsinglebtn.OnDialogClickListener
 import com.breezefieldsalesdemo.features.commondialogsinglebtn.TermsAndConditionsSingleBtnDialog
+import com.breezefieldsalesdemo.features.contacts.ActivityDtlsFrag
 import com.breezefieldsalesdemo.features.contacts.ContactDtls
 import com.breezefieldsalesdemo.features.contacts.ContactGr
 import com.breezefieldsalesdemo.features.contacts.ContactsAddFrag
@@ -448,9 +448,10 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
         Pref.MultiVisitIntervalInMinutes = "1"
         Pref.IsShowMenuAnyDesk = false
 
-        println("load_frag " + mFragType.toString() + " " + Pref.user_id.toString()+" " + Pref.willTimelineWithFixedLocationShow.toString())
+        println("load_frag " + mFragType.toString() + " " + Pref.user_id.toString()+" " + Pref.loc_k.toString()+" "+Pref.firebase_k.toString())
 
         batteryCheck(mFragType,addToStack,initializeObject)
+
         /*if (addToStack) {
             mTransaction.add(R.id.frame_layout_container, getFragInstance(mFragType, initializeObject, true)!!, mFragType.toString())
             mTransaction.addToBackStack(mFragType.toString()).commitAllowingStateLoss()
@@ -460,8 +461,6 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
         }*/
 
     }
-
-
 
 
     var contactDtls : ArrayList<ContactDtls> = ArrayList()
@@ -915,7 +914,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
             @Throws(AuthFailureError::class)
             override fun getHeaders(): Map<String, String> {
                 val params: MutableMap<String, String> = HashMap()
-                params["Authorization"] = getString(R.string.PART_1)+getString(R.string.PART_2)+getString(R.string.PART_3)+getString(R.string.PART_4)//getString(R.string.firebase_key)
+                params["Authorization"] = Pref.firebase_k.toString()//getString(R.string.firebase_key)
                 params["Content-Type"] = "application/json"
                 return params
             }
@@ -1051,7 +1050,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
     private lateinit var device_info_TV: AppCustomTextView
     private lateinit var permission_info_TV: AppCustomTextView
     private lateinit var anydesk_info_TV: AppCustomTextView
-    private lateinit var screen_record_info_TV: AppCustomTextView
+    //private lateinit var screen_record_info_TV: AppCustomTextView
     private lateinit var check_custom_status_TV: AppCustomTextView
     private lateinit var micro_learning_TV: AppCustomTextView
 
@@ -1294,8 +1293,10 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                     val shopList = AppDatabase.getDBInstance()?.addShopEntryDao()?.all
                     shopList?.forEach {
                         if (!TextUtils.isEmpty(it.dateOfBirth)) {
+                            println("tag_dob_reg inside")
                             //if (AppUtils.getCurrentDateForShopActi() == AppUtils.changeAttendanceDateFormatToCurrent(it.dateOfBirth)) {
                             if (AppUtils.getCurrentMonthDayForShopActi() == AppUtils.changeAttendanceDateFormatToMonthDay(it.dateOfBirth)) {
+                                println("tag_dob_reg inside 1 dob ${it.dateOfBirth}")
                                 val notification = NotificationUtils(getString(R.string.app_name), "", "", "")
                                 var body = ""
                                 body = if (TextUtils.isEmpty(it.ownerEmailId))
@@ -1305,6 +1306,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                                 tv_noti_count.visibility=View.VISIBLE
                                 Pref.NotiCountFlag = true
                                 notification.sendLocNotification(this, body)
+                                println("tag_dob_reg inside 1 send noti dob ${it.dateOfBirth}")
                             }
                         }
 
@@ -1990,11 +1992,14 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
             }
         }*/
 
-        if(DashboardFragment.isRecordRootVisible){
+        //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
+       /* if(DashboardFragment.isRecordRootVisible){
             screen_record_info_TV.text="Stop Recording"
         }else{
             screen_record_info_TV.text="Screen Recorder"
-        }
+        }*/
+        //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
 
 
         if (!isGpsDisabled)
@@ -2370,8 +2375,9 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
 
 
     override fun onDestroy() {
-
-        DashboardFragment.isRecordRootVisible=false
+        //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+       // DashboardFragment.isRecordRootVisible=false
+        //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
 
         textToSpeech?.let {
             it.stop()
@@ -2774,7 +2780,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
         device_info_TV = findViewById(R.id.device_info_TV)
         permission_info_TV = findViewById(R.id.permission_info_TV)
        // anydesk_info_TV = findViewById(R.id.anydesk_info_TV)
-        screen_record_info_TV = findViewById(R.id.screen_record_info_TV)
+       // screen_record_info_TV = findViewById(R.id.screen_record_info_TV)
         check_custom_status_TV = findViewById(R.id.check_custom_status_TV)
         micro_learning_TV = findViewById(R.id.micro_learning_TV)
 
@@ -2876,7 +2882,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
         device_info_TV.setOnClickListener(this)
         permission_info_TV.setOnClickListener(this)
        // anydesk_info_TV.setOnClickListener(this)
-        screen_record_info_TV.setOnClickListener(this)
+       // screen_record_info_TV.setOnClickListener(this)
         check_custom_status_TV.setOnClickListener(this)
         micro_learning_TV.setOnClickListener(this)
 
@@ -3295,12 +3301,13 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
             photo_registration.visibility=View.GONE
 //            photo_team_attendance.visibility=View.GONE
         }
-
-        if(AppUtils.getSharedPreferencesIsScreenRecorderEnable(mContext)){
+        //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+      /*  if(AppUtils.getSharedPreferencesIsScreenRecorderEnable(mContext)){
             screen_record_info_TV.visibility=View.VISIBLE
         }else{
             screen_record_info_TV.visibility=View.GONE
-        }
+        }*/
+        //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
 
 
         if(Pref.IsShowMenuAddAttendance){
@@ -3693,11 +3700,11 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                     //loadFragment(FragType.NewOrderListFragment, false, "")
                     // 19.0 DashboardFragment v 4.2.6 Suman 03/05/2024 mantis 27424 Order show update
                     if(Pref.isOrderShow && Pref.ShowUserwisePartyWithCreateOrder){
-                        (mContext as DashboardActivity).loadFragment(FragType.NewOrderListFragment, true, "")
+                        (mContext as DashboardActivity).loadFragment(FragType.NewOrderListFragment, false, "")
                     }else if(Pref.isOrderShow && !Pref.ShowUserwisePartyWithCreateOrder){
-                        (mContext as DashboardActivity).loadFragment(FragType.NewOrderListFragment, true, "")
+                        (mContext as DashboardActivity).loadFragment(FragType.NewOrderListFragment, false, "")
                     }else if(!Pref.isOrderShow && Pref.ShowUserwisePartyWithCreateOrder){
-                        (mContext as DashboardActivity).loadFragment(FragType.ViewNewOrdHisAllFrag, true, "")
+                        (mContext as DashboardActivity).loadFragment(FragType.ViewNewOrdHisAllFrag, false, "")
                     }
                 }
 
@@ -4079,7 +4086,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
             }
             R.id.menu_market_assist_TV ->{
                 //loadFragment(FragType.ShopListMarketAssistFrag, true, "")
-                loadFragment(FragType.MarketAssistTabFrag, true, "")
+                loadFragment(FragType.MarketAssistTabFrag, false, "")
             }
             R.id.tv_pending_out_loc_menu -> {
                 if (!Pref.isAddAttendence) {
@@ -4397,7 +4404,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                 showLanguageAlert(true)
             }
             R.id.distributor_wise_order_list_TV ->{
-                loadFragment(FragType.DistributorwiseorderlistFragment, true, "")
+                loadFragment(FragType.DistributorwiseorderlistFragment, false, "")
             }
 
             R.id.photo_registration -> {
@@ -4624,11 +4631,11 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                 }
             }
 */
-
-            R.id.screen_record_info_TV -> {
+            //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+          /*  R.id.screen_record_info_TV -> {
 
                 initScreenRecorderPermissionCheck()
-/*
+*//*
                 permissionUtils = PermissionUtils(this, object : PermissionUtils.OnPermissionListener {
                     override fun onPermissionGranted() {
 
@@ -4670,10 +4677,10 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                     }
 
                 }, arrayOf<String>(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE))
-*/
+*//*
 
 
-                /*  if(DashboardFragment.hbRecorder ==null){
+                *//*  if(DashboardFragment.hbRecorder ==null){
                     screen_record_info_TV.text="Start Screen Recorder"
                     DashboardFragment.ll_recorder_root.visibility=View.VISIBLE
                 }else{
@@ -4684,8 +4691,10 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                         screen_record_info_TV.text="Start Screen Recorder"
                         DashboardFragment.ll_recorder_root.visibility=View.VISIBLE
                     }
-                }*/
-            }
+                }*//*
+            }*/
+            //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
             R.id.check_custom_status_TV->{
                 Toaster.msgShort(this,isWorkerRunning("workerTag").toString())
             }
@@ -4696,9 +4705,9 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
 
             R.id.tv_performance_teamMenu -> {
                 if(AppUtils.isOnline(mContext)){
-                    loadFragment(FragType.PerformanceAppFragment, true, "")
+                    loadFragment(FragType.PerformanceAppFragment, false, "")
                 }else{
-                    loadFragment(FragType.OwnPerformanceFragment, true, "")
+                    loadFragment(FragType.OwnPerformanceFragment, false, "")
                 }
             }
 
@@ -4722,36 +4731,40 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
 
         permissionUtils = PermissionUtils(mContext as Activity, object : PermissionUtils.OnPermissionListener {
             override fun onPermissionGranted() {
-                if (DashboardFragment.hbRecorder != null) {
+                //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
 
-                    if (DashboardFragment.hbRecorder!!.isBusyRecording && DashboardFragment.hbRecorder != null) {
-                        Toast.makeText(this@DashboardActivity, "Please Stop Recording", Toast.LENGTH_SHORT).show()
-                    } else {
-                        if (DashboardFragment.isRecordRootVisible) {
-                            screen_record_info_TV.text = "Screen Recorder"
-                            DashboardFragment.ll_recorder_root.visibility = View.GONE
-                            DashboardFragment.isRecordRootVisible = false
-                            drawerLayout.closeDrawers()
-                        } else {
-                            screen_record_info_TV.text = "Stop Recording"
-                            DashboardFragment.ll_recorder_root.visibility = View.VISIBLE
-                            DashboardFragment.isRecordRootVisible = true
-                            drawerLayout.closeDrawers()
-                        }
-                    }
-                } else {
-                    if (DashboardFragment.isRecordRootVisible) {
-                        screen_record_info_TV.text = "Screen Recorder"
-                        DashboardFragment.ll_recorder_root.visibility = View.GONE
-                        DashboardFragment.isRecordRootVisible = false
-                        drawerLayout.closeDrawers()
-                    } else {
-                        screen_record_info_TV.text = "Stop Recording"
-                        DashboardFragment.ll_recorder_root.visibility = View.VISIBLE
-                        DashboardFragment.isRecordRootVisible = true
-                        drawerLayout.closeDrawers()
-                    }
-                }
+                /*                if (DashboardFragment.hbRecorder != null) {
+
+                                    if (DashboardFragment.hbRecorder!!.isBusyRecording && DashboardFragment.hbRecorder != null) {
+                                        Toast.makeText(this@DashboardActivity, "Please Stop Recording", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        if (DashboardFragment.isRecordRootVisible) {
+                                            screen_record_info_TV.text = "Screen Recorder"
+                                            DashboardFragment.ll_recorder_root.visibility = View.GONE
+                                            DashboardFragment.isRecordRootVisible = false
+                                            drawerLayout.closeDrawers()
+                                        } else {
+                                            screen_record_info_TV.text = "Stop Recording"
+                                            DashboardFragment.ll_recorder_root.visibility = View.VISIBLE
+                                            DashboardFragment.isRecordRootVisible = true
+                                            drawerLayout.closeDrawers()
+                                        }
+                                    }
+                                } else {
+                                    if (DashboardFragment.isRecordRootVisible) {
+                                        screen_record_info_TV.text = "Screen Recorder"
+                                        DashboardFragment.ll_recorder_root.visibility = View.GONE
+                                        DashboardFragment.isRecordRootVisible = false
+                                        drawerLayout.closeDrawers()
+                                    } else {
+                                        screen_record_info_TV.text = "Stop Recording"
+                                        DashboardFragment.ll_recorder_root.visibility = View.VISIBLE
+                                        DashboardFragment.isRecordRootVisible = true
+                                        drawerLayout.closeDrawers()
+                                    }
+                                }*/
+                //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
             }
 
             override fun onPermissionNotGranted() {
@@ -5045,14 +5058,14 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                     mFragment = PerformanceAppFragment()
                 }
                 setTopBarTitle("Performance Insights")
-                setTopBarVisibility(TopBarConfig.BACK)
+                setTopBarVisibility(TopBarConfig.GENERAL_HOME_MENU)
             }
             FragType.OwnPerformanceFragment -> {
                 if (enableFragGeneration) {
                     mFragment = OwnPerformanceFragment()
                 }
                 setTopBarTitle("Performance Insights")
-                setTopBarVisibility(TopBarConfig.BACK)
+                setTopBarVisibility(TopBarConfig.GENERAL_HOME_MENU)
             }
             FragType.allPerformanceFrag -> {
                 if (enableFragGeneration) {
@@ -5101,6 +5114,13 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                     mFragment = OrderListFrag.getInstance(initializeObject)
                 }
                 setTopBarTitle(getString(R.string.order_detail))
+                setTopBarVisibility(TopBarConfig.BACK)
+            }
+            FragType.ActivityDtlsFrag -> {
+                if (enableFragGeneration) {
+                    mFragment = ActivityDtlsFrag.getInstance(initializeObject)
+                }
+                setTopBarTitle(getString(R.string.activity_detail))
                 setTopBarVisibility(TopBarConfig.BACK)
             }
             FragType.ViewOrdDtls -> {
@@ -6507,7 +6527,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                     mFragment = PrivacypolicyWebviewFrag()
                 }
                 setTopBarTitle("Privacy Policy")
-                setTopBarVisibility(TopBarConfig.BACK)
+                setTopBarVisibility(TopBarConfig.GENERAL_HOME_MENU)
             }
             FragType.MicroLearningWebViewFragment -> {
                 if (enableFragGeneration) {
@@ -6593,14 +6613,13 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                     //mFragment = BaseFragment()
                 }
                 setTopBarTitle(getString(R.string.photo_registration))
-                setTopBarVisibility(TopBarConfig.HOME)
                 setTopBarVisibility(TopBarConfig.PHOTOREG)
             }
             FragType.ContactsFrag -> {
                 if (enableFragGeneration) {
                     mFragment = ContactsFrag()
                 }
-                setTopBarTitle("Contact(s)")
+                setTopBarTitle("CRM")
                 setTopBarVisibility(TopBarConfig.CONTACT)
             }
             FragType.ContactsAddFrag -> {
@@ -6744,7 +6763,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                     mFragment = MarketAssistTabFrag()
                 }
                 setTopBarTitle("Market Assistant")
-                setTopBarVisibility(TopBarConfig.BACK)
+                setTopBarVisibility(TopBarConfig.GENERAL_HOME_MENU)
             }
             FragType.ShopDtlsMarketAssistFrag -> {
                 if (enableFragGeneration) {
@@ -8012,7 +8031,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                 add_template.visibility = View.GONE
                 iv_leaderboard.visibility = View.GONE
 
-                if (Pref.willScanVisitingCard) {
+            /*    if (Pref.willScanVisitingCard) {
                     iv_scan.visibility = View.VISIBLE
                     iv_view_text.visibility = View.VISIBLE
                     iv_home_icon.visibility = View.GONE
@@ -8022,7 +8041,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                     iv_view_text.visibility = View.GONE
                     iv_home_icon.visibility = View.VISIBLE
                     logo.visibility = View.VISIBLE
-                }
+                }*/
 
                 // Show back button
                 supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -8487,6 +8506,67 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             }
 
+            TopBarConfig.GENERAL_HOME_BACK -> {
+                iv_home_icon.visibility = View.VISIBLE
+                iv_leaderboard.visibility = View.GONE
+                mDrawerToggle.isDrawerIndicatorEnabled = false
+                iv_search_icon.visibility = View.GONE
+                iv_sync_icon.visibility = View.GONE
+                rl_cart.visibility = View.GONE
+                iv_filter_icon.visibility = View.GONE
+                rl_confirm_btn.visibility = View.GONE
+                logo.visibility = View.GONE
+                logo.clearAnimation()
+                logo.animate().cancel()
+                iv_list_party.visibility = View.GONE
+                iv_map.visibility = View.GONE
+                iv_settings.visibility = View.GONE
+                ic_calendar.visibility = View.GONE
+                ic_chat_bot.visibility = View.GONE
+                iv_cancel_chat.visibility = View.GONE
+                iv_people.visibility = View.GONE
+                iv_scan.visibility = View.GONE
+                iv_view_text.visibility = View.GONE
+                fl_net_status.visibility = View.GONE
+                add_scheduler_email_verification.visibility = View.GONE
+                add_template.visibility = View.GONE
+
+                // Show back button
+                supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+                mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_header_back_arrow)
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            }
+            TopBarConfig.GENERAL_HOME_MENU -> {
+                iv_home_icon.visibility = View.VISIBLE
+                iv_leaderboard.visibility = View.GONE
+                mDrawerToggle.isDrawerIndicatorEnabled = true
+                iv_search_icon.visibility = View.GONE
+                iv_sync_icon.visibility = View.GONE
+                rl_cart.visibility = View.GONE
+                iv_filter_icon.visibility = View.GONE
+                rl_confirm_btn.visibility = View.GONE
+                logo.visibility = View.GONE
+                logo.clearAnimation()
+                logo.animate().cancel()
+                iv_list_party.visibility = View.GONE
+                iv_map.visibility = View.GONE
+                iv_settings.visibility = View.GONE
+                ic_calendar.visibility = View.GONE
+                ic_chat_bot.visibility = View.GONE
+                iv_cancel_chat.visibility = View.GONE
+                iv_people.visibility = View.GONE
+                iv_scan.visibility = View.GONE
+                iv_view_text.visibility = View.GONE
+                fl_net_status.visibility = View.GONE
+                add_scheduler_email_verification.visibility = View.GONE
+                add_template.visibility = View.GONE
+
+                // Show back button
+                supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+                mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_header_back_arrow)
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            }
+
             TopBarConfig.TEAMMAP -> {
                 iv_home_icon.visibility = View.GONE
                 iv_leaderboard.visibility = View.GONE
@@ -8520,7 +8600,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
             TopBarConfig.DISTWISEORDER -> {
                 iv_home_icon.visibility = View.GONE
                 iv_leaderboard.visibility = View.GONE
-                mDrawerToggle.isDrawerIndicatorEnabled = false
+                mDrawerToggle.isDrawerIndicatorEnabled = true
                 iv_search_icon.visibility = View.GONE
                 iv_sync_icon.visibility = View.GONE
                 rl_cart.visibility = View.GONE
@@ -9459,6 +9539,9 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
             super.onBackPressed()
             if (getFragment() != null && getFragment() is ContactsFrag){
                 (getFragment() as ContactsFrag).updateToolbar()
+            }
+            if (getFragment() != null && getFragment() is ActivityDtlsFrag){
+                (getFragment() as ActivityDtlsFrag).updateList()
             }
         }
         else {
@@ -15387,11 +15470,15 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
 
     fun updateScreenRecStatus() {
         Log.e("xcv", "updateScreenRecStatus")
-        if(DashboardFragment.isRecordRootVisible){
-            screen_record_info_TV.text="Stop Recording"
-        }else{
-            screen_record_info_TV.text="Screen Recorder"
-        }
+        //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
+        /* if(DashboardFragment.isRecordRootVisible){
+             screen_record_info_TV.text="Stop Recording"
+         }else{
+             screen_record_info_TV.text="Screen Recorder"
+         }*/
+        //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
     }
 
     private fun apiCallOnClearAttenReject() {  // clearing leave if isOnLeave is true
@@ -15542,7 +15629,7 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
             @Throws(AuthFailureError::class)
             override fun getHeaders(): Map<String, String> {
                 val params: MutableMap<String, String> = HashMap()
-                params["Authorization"] = getString(R.string.PART_1)+getString(R.string.PART_2)+getString(R.string.PART_3)+getString(R.string.PART_4)//getString(R.string.firebase_key)
+                params["Authorization"] = Pref.firebase_k.toString()//getString(R.string.firebase_key)
                 params["Content-Type"] = "application/json"
                 return params
             }
@@ -15850,6 +15937,17 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
                                 shopDurationData.distFromProfileAddrKms = shopActivity.distFromProfileAddrKms
                                 shopDurationData.stationCode = shopActivity.stationCode
 
+                                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                                try {
+                                    var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                                    shopDurationData.shop_lat=shopOb.shopLat.toString()
+                                    shopDurationData.shop_long=shopOb.shopLong.toString()
+                                    shopDurationData.shop_addr=shopOb.address.toString()
+                                }catch (ex:Exception){
+                                    ex.printStackTrace()
+                                }
+                                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
+
                                 shopDataList.add(shopDurationData)
 
                                 //////////////////////////
@@ -15966,6 +16064,17 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
 
                                 shopDurationData.distFromProfileAddrKms = it.distFromProfileAddrKms
                                 shopDurationData.stationCode = it.stationCode
+
+                                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                                try {
+                                    var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                                    shopDurationData.shop_lat=shopOb.shopLat.toString()
+                                    shopDurationData.shop_long=shopOb.shopLong.toString()
+                                    shopDurationData.shop_addr=shopOb.address.toString()
+                                }catch (ex:Exception){
+                                    ex.printStackTrace()
+                                }
+                                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
 
                                 shopDataList.add(shopDurationData)
 

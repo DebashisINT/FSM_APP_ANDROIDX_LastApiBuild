@@ -122,8 +122,6 @@ import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import com.hbisoft.hbrecorder.HBRecorder
-import com.hbisoft.hbrecorder.HBRecorderListener
 import com.pnikosis.materialishprogress.ProgressWheel
 import com.themechangeapp.pickimage.PermissionHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -167,7 +165,7 @@ import kotlin.collections.ArrayList
 // 17.0 DashboardFragment v 4.1.6 Suman 13/07/2023 mantis 26555 Usersettings
 // 18.0 DashboardFragment v 4.2.6 Puja 12/03/2024 mantis 0027298 IsShowLeaderBoard functionality
 // 19.0 DashboardFragment v 4.2.6 Suman 03/05/2024 mantis 27424 Order show update
-class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListener, View.OnTouchListener {
+class DashboardFragment : BaseFragment(), View.OnClickListener/*, HBRecorderListener*/, View.OnTouchListener {
 
     var dX = 0f
     var dY = 0f
@@ -446,7 +444,9 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
     override fun onResume() {
         super.onResume()
 
-        if (hbRecorder != null) {
+        //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
+/*        if (hbRecorder != null) {
             if (hbRecorder!!.isBusyRecording) {
                 iv_screen_status.setImageResource(R.drawable.green_round)
                 pause_record.visibility = View.VISIBLE
@@ -462,7 +462,8 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
         } else {
             pause_record.visibility = View.GONE
             iv_screen_status.setImageResource(R.drawable.red_circle)
-        }
+        }*/
+        //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
 
 
 
@@ -747,28 +748,34 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
     private fun initView(view: View?) {
         ll_beat_shop_wise = view!!.findViewById(R.id.ll_beat_shop_wise)
         tv_beatNamenew =  view!!.findViewById(R.id.tv_beatNamenew)
-        cancel_timer = view!!.findViewById(R.id.cancel_timer)
-        iv_screen_status = view!!.findViewById(R.id.iv_screen_status)
-        tv_timer = view!!.findViewById(R.id.tv_timer)
-        pause_record = view!!.findViewById(R.id.pause_record)
-        ll_recorder_root = view!!.findViewById(R.id.ll_recorder_root)
-        ll_recorder_root.setOnTouchListener(this);
 
-        cancel_timer.setOnClickListener(this)
-        iv_screen_status.setOnClickListener(this)
-        pause_record.setOnClickListener(this)
+        //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+        /* cancel_timer = view!!.findViewById(R.id.cancel_timer)
+         iv_screen_status = view!!.findViewById(R.id.iv_screen_status)
+         tv_timer = view!!.findViewById(R.id.tv_timer)
+         pause_record = view!!.findViewById(R.id.pause_record)
+         ll_recorder_root = view!!.findViewById(R.id.ll_recorder_root)
+         ll_recorder_root.setOnTouchListener(this);
 
-        if (isRecordRootVisible) {
+         cancel_timer.setOnClickListener(this)
+         iv_screen_status.setOnClickListener(this)
+         pause_record.setOnClickListener(this)*/
+        //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
+        //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+       /* if (isRecordRootVisible) {
             ll_recorder_root.visibility = View.VISIBLE
         } else {
             ll_recorder_root.visibility = View.GONE
-        }
-
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            fab.setImageDrawable(getResources().getDrawable(R.drawable.custom_toolbar_back,mContext.theme))
-        } else {
-            fab.setImageDrawable(getResources().getDrawable(R.drawable.custom_toolbar_back))
         }*/
+        //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
+
+        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+             fab.setImageDrawable(getResources().getDrawable(R.drawable.custom_toolbar_back,mContext.theme))
+         } else {
+             fab.setImageDrawable(getResources().getDrawable(R.drawable.custom_toolbar_back))
+         }*/
 
 
         fab = view!!.findViewById(R.id.fab)
@@ -1755,46 +1762,50 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
                     (mContext as DashboardActivity).loadFragment(FragType.TimeLineFragment, false, "")
 
             }
-            R.id.cancel_timer -> {
-                if (!tv_timer.text.toString().trim().equals("00.00.00")) {
-                    tv_timer.text = "00.00.00"
-                } else {
-                    ll_recorder_root.visibility = View.GONE
-                    DashboardFragment.isRecordRootVisible = false
-                    (mContext as DashboardActivity).updateScreenRecStatus()
-                }
-            }
-            R.id.pause_record -> {
-                if (hbRecorder != null) {
-                    if (hbRecorder!!.isBusyRecording) {
-                        if (hbRecorder!!.isRecordingPaused) {
-                            hbRecorder!!.resumeScreenRecording()
-                            ScreenRecService.isPause = false
-                            pause_record.text = "||"
-                        } else {
-                            hbRecorder!!.pauseScreenRecording()
-                            ScreenRecService.isPause = true
-                            pause_record.text = ">"
-                        }
+            //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+            /*           R.id.cancel_timer -> {
+                          if (!tv_timer.text.toString().trim().equals("00.00.00")) {
+                              tv_timer.text = "00.00.00"
+                          } else {
+                              ll_recorder_root.visibility = View.GONE
+                              DashboardFragment.isRecordRootVisible = false
+                              (mContext as DashboardActivity).updateScreenRecStatus()
+                          }
+                      }
 
-                    }
-                }
-            }
-            R.id.iv_screen_status -> {
-                if (hbRecorder != null) {
-                    if (hbRecorder!!.isBusyRecording) {
-                        pause_record.visibility = View.GONE
-                        hbRecorder!!.stopScreenRecording()
-                    } else {
-                        pause_record.visibility = View.VISIBLE
-                        startRecordingScreen()
-                    }
-                } else {
-                    pause_record.visibility = View.VISIBLE
-                    startRecordingScreen()
-                }
 
-            }
+                     R.id.pause_record -> {
+                          if (hbRecorder != null) {
+                              if (hbRecorder!!.isBusyRecording) {
+                                  if (hbRecorder!!.isRecordingPaused) {
+                                      hbRecorder!!.resumeScreenRecording()
+                                      ScreenRecService.isPause = false
+                                      pause_record.text = "||"
+                                  } else {
+                                      hbRecorder!!.pauseScreenRecording()
+                                      ScreenRecService.isPause = true
+                                      pause_record.text = ">"
+                                  }
+
+                              }
+                          }
+                      }
+                      R.id.iv_screen_status -> {
+                          if (hbRecorder != null) {
+                              if (hbRecorder!!.isBusyRecording) {
+                                  pause_record.visibility = View.GONE
+                                  hbRecorder!!.stopScreenRecording()
+                              } else {
+                                  pause_record.visibility = View.VISIBLE
+                                  startRecordingScreen()
+                              }
+                          } else {
+                              pause_record.visibility = View.VISIBLE
+                              startRecordingScreen()
+                          }
+
+                      }*/
+            //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
             R.id.shop_ll -> {
 
                 /*val list = ArrayList<ShopDurationRequestData>()
@@ -4253,14 +4264,18 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
                                                 } else {
                                                     AppUtils.saveSharedPreferencesIsFaceDetectionWithCaptcha(mContext, false)
                                                 }
-                                            } else if (response.getconfigure!![i].Key.equals("IsScreenRecorderEnable", ignoreCase = true)) {
+                                            }
+                                            //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+                                            /*else if (response.getconfigure!![i].Key.equals("IsScreenRecorderEnable", ignoreCase = true)) {
                                                 Pref.IsScreenRecorderEnable = response.getconfigure!![i].Value == "1"
                                                 if (Pref.IsScreenRecorderEnable) {
                                                     AppUtils.saveSharedPreferencesIsScreenRecorderEnable(mContext, true)
                                                 } else {
                                                     AppUtils.saveSharedPreferencesIsScreenRecorderEnable(mContext, false)
                                                 }
-                                            }
+                                            }*/
+                                            //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
 //                                            else if (response.getconfigure?.get(i)?.Key.equals("IsFromPortal", ignoreCase = true)) {
                                             else if (response.getconfigure?.get(i)?.Key.equals("IsDocRepoFromPortal", ignoreCase = true)) {
                                                 Pref.IsFromPortal = response.getconfigure!![i].Value == "1"
@@ -4965,6 +4980,11 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
                                                 if (!TextUtils.isEmpty(response.getconfigure?.get(i)?.Value)) {
                                                     Pref.ShowUserwisePartyWithCreateOrder = response.getconfigure?.get(i)?.Value == "1"
                                                 }
+                                            }else if (response.getconfigure?.get(i)?.Key.equals("IsRouteUpdateForShopUser", ignoreCase = true)) {
+                                                Pref.IsRouteUpdateForShopUser = response.getconfigure!![i].Value == "1"
+                                                if (!TextUtils.isEmpty(response.getconfigure?.get(i)?.Value)) {
+                                                    Pref.IsRouteUpdateForShopUser = response.getconfigure?.get(i)?.Value == "1"
+                                                }
                                             }
                                         }
                                     }
@@ -5453,6 +5473,15 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
                                     Pref.IsShowLeaderBoard = configResponse.IsShowLeaderBoard!!
                                 //end mantis id 0027298 IsShowLeaderBoard functionality Puja 12-03-2024  v4.2.6
 
+                                //begin mantis id 0027432 loc_k functionality Puja 08-05-2024 v4.2.7
+                                if (configResponse.loc_k != null)
+                                    Pref.loc_k = configResponse.loc_k!!
+                                //end mantis id 0027432 loc_k functionality Puja 08-05-2024  v4.2.7
+
+                                //begin mantis id 0027432 firebase_k functionality Puja 08-05-2024 v4.2.7
+                                if (configResponse.firebase_k != null)
+                                    Pref.firebase_k = "key="+configResponse.firebase_k!!
+                                //end mantis id 0027432 firebase_k functionality Puja 08-05-2024  v4.2.7
 
 
                             }
@@ -6783,11 +6812,14 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
 
 
     companion object {
-        lateinit var iv_screen_status: ImageView
-        lateinit var tv_timer: TextView
-        var hbRecorder: HBRecorder? = null
-        lateinit var ll_recorder_root: LinearLayout
-        var isRecordRootVisible: Boolean = false
+        //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
+        /* lateinit var iv_screen_status: ImageView
+         lateinit var tv_timer: TextView
+         var hbRecorder: HBRecorder? = null
+         lateinit var ll_recorder_root: LinearLayout
+         var isRecordRootVisible: Boolean = false*/
+        //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
 
     }
 
@@ -6808,8 +6840,8 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
         screen_timer.setBase(SystemClock.elapsedRealtime())
     }*/
 
-
-    @SuppressLint("UseRequireInsteadOfGet")
+    //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+/*    @SuppressLint("UseRequireInsteadOfGet")
     private fun startRecordingScreen() {
 
         if (hbRecorder == null) {
@@ -6890,7 +6922,8 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
         simpleDialog.show()
 
 
-    }
+    }*/
+    //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -6900,7 +6933,9 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
                            intent.action = CustomConstants.START_Screen_SERVICE
                            mContext.startService(intent)*/
 //                hbRecorder!!.startScreenRecording(data, resultCode, mContext as Activity)
-                hbRecorder!!.startScreenRecording(data, resultCode) // 9.0 DashboardFragment  AppV 4.0.7 Saheli    15/02/2023  mantis 0025673  screen recoreder gradle & finction update
+                //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+             //   hbRecorder!!.startScreenRecording(data, resultCode) // 9.0 DashboardFragment  AppV 4.0.7 Saheli    15/02/2023  mantis 0025673  screen recoreder gradle & finction update
+                //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
             }
             if (requestCode == 171){
                 println("reg_face - dashboard_frag face Detect Face Match"+AppUtils.getCurrentDateTime());
@@ -9683,6 +9718,17 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
                                 shopDurationData.multi_contact_name = shopActivity.multi_contact_name
                                 shopDurationData.multi_contact_number = shopActivity.multi_contact_number
 
+                                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                                try {
+                                    var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                                    shopDurationData.shop_lat=shopOb.shopLat.toString()
+                                    shopDurationData.shop_long=shopOb.shopLong.toString()
+                                    shopDurationData.shop_addr=shopOb.address.toString()
+                                }catch (ex:Exception){
+                                    ex.printStackTrace()
+                                }
+                                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
+
                                 shopDataList.add(shopDurationData)
 
                                 //////////////////////////
@@ -9793,6 +9839,17 @@ class DashboardFragment : BaseFragment(), View.OnClickListener, HBRecorderListen
                                 // 6.0 DashboardFragment AppV 4.0.6  multiple contact Data added on Api called
                                 shopDurationData.multi_contact_name = it.multi_contact_name
                                 shopDurationData.multi_contact_number = it.multi_contact_number
+
+                                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                                try {
+                                    var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                                    shopDurationData.shop_lat=shopOb.shopLat.toString()
+                                    shopDurationData.shop_long=shopOb.shopLong.toString()
+                                    shopDurationData.shop_addr=shopOb.address.toString()
+                                }catch (ex:Exception){
+                                    ex.printStackTrace()
+                                }
+                                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
 
                                 shopDataList.add(shopDurationData)
 

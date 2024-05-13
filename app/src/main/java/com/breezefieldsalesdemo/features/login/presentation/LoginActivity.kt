@@ -895,7 +895,15 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LocationListener {
 
                                 //end mantis id 0027298 IsShowLeaderBoard functionality Puja 12-03-2024  v4.2.6
 
+                                //begin mantis id 0027432 loc_k functionality Puja 08-05-2024 v4.2.7
+                                if (configResponse.loc_k != null)
+                                    Pref.loc_k = configResponse.loc_k!!
+                                //end mantis id 0027432 loc_k functionality Puja 08-05-2024  v4.2.7
 
+                                //begin mantis id 0027432 firebase_k functionality Puja 08-05-2024 v4.2.7
+                                if (configResponse.firebase_k != null)
+                                    Pref.firebase_k = "key="+configResponse.firebase_k!!
+                                //end mantis id 0027432 firebase_k functionality Puja 08-05-2024  v4.2.7
                             }
                             isApiInitiated = false
                             /*API_Optimization 02-03-2022*/
@@ -6322,14 +6330,18 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LocationListener {
                                                 } else {
                                                     AppUtils.saveSharedPreferencesIsFaceDetectionWithCaptcha(this, false)
                                                 }
-                                            } else if (response.getconfigure!![i].Key.equals("IsScreenRecorderEnable", ignoreCase = true)) {
+                                            }
+                                            //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+                                            /*else if (response.getconfigure!![i].Key.equals("IsScreenRecorderEnable", ignoreCase = true)) {
                                                 Pref.IsScreenRecorderEnable = response.getconfigure!![i].Value == "1"
                                                 if (Pref.IsScreenRecorderEnable) {
                                                     AppUtils.saveSharedPreferencesIsScreenRecorderEnable(this, true)
                                                 } else {
                                                     AppUtils.saveSharedPreferencesIsScreenRecorderEnable(this, false)
                                                 }
-                                            }
+                                            }*/
+                                            //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
 //                                            else if (response.getconfigure?.get(i)?.Key.equals("IsFromPortal", ignoreCase = true)) {
                                             else if (response.getconfigure?.get(i)?.Key.equals("IsDocRepoFromPortal", ignoreCase = true)) {
                                                 Pref.IsFromPortal = response.getconfigure!![i].Value == "1"
@@ -7076,6 +7088,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LocationListener {
                                                 Pref.ShowUserwisePartyWithCreateOrder = response.getconfigure!![i].Value == "1"
                                                 if (!TextUtils.isEmpty(response.getconfigure?.get(i)?.Value)) {
                                                     Pref.ShowUserwisePartyWithCreateOrder = response.getconfigure?.get(i)?.Value == "1"
+                                                }
+                                            }else if (response.getconfigure?.get(i)?.Key.equals("IsRouteUpdateForShopUser", ignoreCase = true)) {
+                                                Pref.IsRouteUpdateForShopUser = response.getconfigure!![i].Value == "1"
+                                                if (!TextUtils.isEmpty(response.getconfigure?.get(i)?.Value)) {
+                                                    Pref.IsRouteUpdateForShopUser = response.getconfigure?.get(i)?.Value == "1"
                                                 }
                                             }
 

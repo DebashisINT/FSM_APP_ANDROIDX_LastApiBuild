@@ -741,6 +741,7 @@
                                 android:textSize="@dimen/_12sdp" />
 
                             <com.breezefieldsalesdemo.widgets.AppCustomTextView
+                                android:id="@+id/tv_frag_add_acti_due_date_time_heading_star"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="*"

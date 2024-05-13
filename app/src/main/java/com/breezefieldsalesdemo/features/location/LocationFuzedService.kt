@@ -107,6 +107,7 @@ import kotlin.collections.ArrayList
 // 10.0 SystemEventReceiver AppV 4.1.3 Saheli    26/04/2023 mantis 0025932 Log file update in service classes for GPS on off time.
 // 11.0 SystemEventReceiver AppV 4.1.3 Suman    03/05/2023 Monitor Broadcast update mantis 26011
 // 12.0 LocationFuzedService v 4.1.6 Tufan 11/07/2023 mantis 26546 revisit sync time
+// 13.0 LocationFuzedService v 4.2.6 Suman 08/05/2024 mantis 0027427 location sync update
 class LocationFuzedService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
         OnCompleteListener<Void>, GpsStatus.Listener {
     override fun onComplete(p0: Task<Void>) {
@@ -3054,6 +3055,13 @@ class LocationFuzedService : Service(), GoogleApiClient.ConnectionCallbacks, Goo
         }
         //negative distance handle Suman 06-02-2024 mantis id 0027225 end
 
+
+        // 13.0 LocationFuzedService v 4.2.6 Suman 08/05/2024 mantis 0027427 location sync update begin
+        if(Pref.IsRouteUpdateForShopUser == false){
+            location.isUploaded = true
+        }
+        // 13.0 LocationFuzedService v 4.2.6 Suman 08/05/2024 mantis 0027427 location sync update end
+
         AppDatabase.getDBInstance()!!.userLocationDataDao().insertAll(location) // save accurate data
 //        XLog.d("Shop to shop distance (At accurate loc save time)====> " + Pref.totalS2SDistance)
         Timber.d("Shop to shop distance (At accurate loc save time)====> " + Pref.totalS2SDistance + " "+location.time)
@@ -3379,6 +3387,17 @@ class LocationFuzedService : Service(), GoogleApiClient.ConnectionCallbacks, Goo
                         shopDurationData.stationCode = shopActivity.stationCode
                         //End of Rev 17 DashboardActivity AppV 4.0.8 Suman    24/04/2023 distanct+station calculation 25806
 
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                        try {
+                            var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                            shopDurationData.shop_lat=shopOb.shopLat.toString()
+                            shopDurationData.shop_long=shopOb.shopLong.toString()
+                            shopDurationData.shop_addr=shopOb.address.toString()
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
+
                         shopDataList.add(shopDurationData)
 
 
@@ -3505,6 +3524,17 @@ class LocationFuzedService : Service(), GoogleApiClient.ConnectionCallbacks, Goo
                         shopDurationData.distFromProfileAddrKms = it.distFromProfileAddrKms
                         shopDurationData.stationCode = it.stationCode
                         //End of Rev 17 DashboardActivity AppV 4.0.8 Suman    24/04/2023 distanct+station calculation 25806
+
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                        try {
+                            var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                            shopDurationData.shop_lat=shopOb.shopLat.toString()
+                            shopDurationData.shop_long=shopOb.shopLong.toString()
+                            shopDurationData.shop_addr=shopOb.address.toString()
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
 
                         shopDataList.add(shopDurationData)
 

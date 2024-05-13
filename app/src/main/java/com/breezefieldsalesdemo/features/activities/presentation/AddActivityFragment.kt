@@ -95,6 +95,7 @@ class AddActivityFragment : BaseFragment(), View.OnClickListener {
     private lateinit var ll_duration: LinearLayout
     private lateinit var ll_priority: LinearLayout
     private lateinit var tv_frag_add_acti_due_date_time_heading: TextView
+    private lateinit var tv_frag_add_acti_due_date_time_heading_star: TextView
     private lateinit var v_due_time_view: View
 
     private var partyId = ""
@@ -185,6 +186,7 @@ class AddActivityFragment : BaseFragment(), View.OnClickListener {
             ll_duration = findViewById(R.id.ll_duration)
             ll_priority = findViewById(R.id.ll_priority)
             tv_frag_add_acti_due_date_time_heading = findViewById(R.id.tv_frag_add_acti_due_date_time_heading)
+            tv_frag_add_acti_due_date_time_heading_star = findViewById(R.id.tv_frag_add_acti_due_date_time_heading_star)
             v_due_time_view = findViewById(R.id.v_due_time_view)
         }
 
@@ -216,6 +218,7 @@ class AddActivityFragment : BaseFragment(), View.OnClickListener {
             tv_due_time.visibility = View.GONE
             v_due_time_view.visibility = View.GONE
             tv_frag_add_acti_due_date_time_heading.text = "Enter Due Date"
+            tv_frag_add_acti_due_date_time_heading_star.visibility = View.GONE
         }
         // Rev 1.0 AddActivityFragment v 4.2.6 Suman 29-04-2024 Hide Fields mantis 27380 end
     }
@@ -1094,7 +1097,7 @@ class AddActivityFragment : BaseFragment(), View.OnClickListener {
             et_hrs.text.toString().trim().toInt() > 23 -> (mContext as DashboardActivity).showSnackMessage(getString(R.string.error_enter_valid_hrs))
             et_mins.text.toString().trim().toInt() > 59 -> (mContext as DashboardActivity).showSnackMessage(getString(R.string.error_enter_valid_mins))
             TextUtils.isEmpty(priorityId) -> (mContext as DashboardActivity).showSnackMessage(getString(R.string.error_select_priority))
-            TextUtils.isEmpty(tv_due_date.text.toString().trim()) -> (mContext as DashboardActivity).showSnackMessage(getString(R.string.error_select_due_date))
+            //TextUtils.isEmpty(tv_due_date.text.toString().trim()) -> (mContext as DashboardActivity).showSnackMessage(getString(R.string.error_select_due_date))
             TextUtils.isEmpty(tv_due_time.text.toString().trim()) -> (mContext as DashboardActivity).showSnackMessage(getString(R.string.error_select_due_time))
             //dueTimeMilis <= timeMilis -> (mContext as DashboardActivity).showSnackMessage(getString(R.string.error_select_proper_time))
             else -> {
@@ -1128,7 +1131,11 @@ class AddActivityFragment : BaseFragment(), View.OnClickListener {
 
                     duration = time
                     priority_id = priorityId
-                    due_date = selectedDueDate
+                    if(selectedDueDate.equals("")){
+                        due_date = AppUtils.getCurrentDateForShopActi()
+                    }  else{
+                        due_date = selectedDueDate
+                    }
                     due_time = tv_due_time.text.toString().trim()
                     attachments = dataPath
                     image = imagePath

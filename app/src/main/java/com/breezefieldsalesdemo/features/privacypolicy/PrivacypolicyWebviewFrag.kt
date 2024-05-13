@@ -1,5 +1,6 @@
 package com.breezefieldsalesdemo.features.privacypolicy
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -49,6 +50,7 @@ class PrivacypolicyWebviewFrag: BaseFragment() {
         return view
     }
 
+    @SuppressLint("NewApi")
     private fun initView(view: View) {
         view.apply {
             webview = findViewById(R.id.webview)

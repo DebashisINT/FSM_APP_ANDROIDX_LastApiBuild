@@ -384,11 +384,14 @@
             android:name=".faceRec.FaceStartActivity"
             android:screenOrientation="portrait" />
 
+        <!--code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+
         <service
             android:name=".ScreenRecService"
             android:enabled="true"
             android:exported="false" />
-
+        code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+-->
         <activity
             android:name=".features.powerSavingSettings.PowerSavingSettingsActivity"
             android:screenOrientation="portrait" />

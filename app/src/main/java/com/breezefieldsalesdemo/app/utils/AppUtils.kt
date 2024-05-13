@@ -2609,9 +2609,10 @@ class AppUtils {
             return mPrefs.getBoolean("IsFaceDetectionWithCaptcha",false)
         }
 
+        //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
 
 
-        fun saveSharedPreferencesIsScreenRecorderEnable(context: Context,value:Boolean){
+       /* fun saveSharedPreferencesIsScreenRecorderEnable(context: Context,value:Boolean){
             val mPrefs = context.getSharedPreferences("IsScreenRecorderEnable_STATUS", Context.MODE_PRIVATE)
             val prefsEditor = mPrefs.edit()
             prefsEditor.putBoolean("IsScreenRecorderEnable", value)
@@ -2622,7 +2623,8 @@ class AppUtils {
             val mPrefs = context.getSharedPreferences("IsScreenRecorderEnable_STATUS", Context.MODE_PRIVATE)
             return mPrefs.getBoolean("IsScreenRecorderEnable",false)
         }
-
+*/
+        //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
 
 
 

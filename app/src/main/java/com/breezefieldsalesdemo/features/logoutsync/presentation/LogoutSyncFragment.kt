@@ -1837,6 +1837,17 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
             shopDurationData.stationCode = shopActivity.stationCode
             //End of Rev 17 DashboardActivity AppV 4.0.8 Suman    24/04/2023 distanct+station calculation 25806
 
+            // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+            try {
+                var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                shopDurationData.shop_lat=shopOb.shopLat.toString()
+                shopDurationData.shop_long=shopOb.shopLong.toString()
+                shopDurationData.shop_addr=shopOb.address.toString()
+            }catch (ex:Exception){
+                ex.printStackTrace()
+            }
+            // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
+
             shopDataList.add(shopDurationData)
         }
         else {
@@ -1949,6 +1960,17 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                 shopDurationData.distFromProfileAddrKms = shopActivity.distFromProfileAddrKms
                 shopDurationData.stationCode = shopActivity.stationCode
                 //End of Rev 17 DashboardActivity AppV 4.0.8 Suman    24/04/2023 distanct+station calculation 25806
+
+                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                try {
+                    var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                    shopDurationData.shop_lat=shopOb.shopLat.toString()
+                    shopDurationData.shop_long=shopOb.shopLong.toString()
+                    shopDurationData.shop_addr=shopOb.address.toString()
+                }catch (ex:Exception){
+                    ex.printStackTrace()
+                }
+                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
 
                 shopDataList.add(shopDurationData)
             }
@@ -3689,6 +3711,17 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                         shopDurationData.stationCode = shopActivity.stationCode
                         //End of Rev 17 DashboardActivity AppV 4.0.8 Suman    24/04/2023 distanct+station calculation 25806
 
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                        try {
+                            var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                            shopDurationData.shop_lat=shopOb.shopLat.toString()
+                            shopDurationData.shop_long=shopOb.shopLong.toString()
+                            shopDurationData.shop_addr=shopOb.address.toString()
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
+
                         shopDataList.add(shopDurationData)
 
 
@@ -3798,6 +3831,17 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                         shopDurationData.distFromProfileAddrKms = it.distFromProfileAddrKms
                         shopDurationData.stationCode = it.stationCode
                         //End of Rev 17 DashboardActivity AppV 4.0.8 Suman    24/04/2023 distanct+station calculation 25806
+
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                        try {
+                            var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                            shopDurationData.shop_lat=shopOb.shopLat.toString()
+                            shopDurationData.shop_long=shopOb.shopLong.toString()
+                            shopDurationData.shop_addr=shopOb.address.toString()
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
 
                         shopDataList.add(shopDurationData)
 

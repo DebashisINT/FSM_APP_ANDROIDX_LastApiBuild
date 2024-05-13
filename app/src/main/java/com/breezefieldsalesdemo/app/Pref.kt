@@ -401,7 +401,9 @@ object Pref : PreferenceHolder() {
         false,
         "IsFaceDetectionWithCaptcha"
     )
-    var IsScreenRecorderEnable: Boolean by bindToPreferenceField(false, "IsScreenRecorderEnable")
+    //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+    // var IsScreenRecorderEnable: Boolean by bindToPreferenceField(false, "IsScreenRecorderEnable")
+    //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
 
     //    var IsFromPortal: Boolean by bindToPreferenceField(false, "IsFromPortal")
     var IsFromPortal: Boolean by bindToPreferenceField(
@@ -1030,6 +1032,11 @@ object Pref : PreferenceHolder() {
 
     var ShowUserwisePartyWithGeoFence : Boolean by bindToPreferenceField(false, "ShowUserwisePartyWithGeoFence")
     var ShowUserwisePartyWithCreateOrder : Boolean by bindToPreferenceField(false, "ShowUserwisePartyWithCreateOrder")
+    //begin mantis id 0027432 loc_k & firebase_k functionality Puja 08-05-2024 v4.2.7
+    var loc_k : String by bindToPreferenceField("", "loc_k")
+    var firebase_k : String by bindToPreferenceField("", "firebase_k")
+    //end mantis id 0027432 loc_k & firebase_k functionality Puja 08-05-2024 v4.2.7
+    var IsRouteUpdateForShopUser : Boolean by bindToPreferenceField(true, "IsRouteUpdateForShopUser")
 }
 
 

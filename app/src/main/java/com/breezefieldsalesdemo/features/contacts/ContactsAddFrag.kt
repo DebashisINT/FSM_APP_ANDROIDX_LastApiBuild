@@ -332,13 +332,18 @@ class ContactsAddFrag : BaseFragment(), View.OnClickListener {
             et_pin.setText(location_pinStr)
             progress_wheel.stopSpinning()
         }*/
-        locationStr = LocationWizard.getNewLocationName(mContext, Pref.current_latitude.toDouble(), Pref.current_longitude.toDouble())
-        location_pinStr = LocationWizard.getPostalCode(mContext, Pref.current_latitude.toDouble(), Pref.current_longitude.toDouble())
-        locationStr_lat =Pref.current_latitude.toDouble().toString()
-        locationStr_long =Pref.current_longitude.toDouble().toString()
+        if(Pref.ContactAddresswithGeofence){
+            locationStr = LocationWizard.getNewLocationName(mContext, Pref.current_latitude.toDouble(), Pref.current_longitude.toDouble())
+            location_pinStr = LocationWizard.getPostalCode(mContext, Pref.current_latitude.toDouble(), Pref.current_longitude.toDouble())
+            locationStr_lat =Pref.current_latitude.toDouble().toString()
+            locationStr_long =Pref.current_longitude.toDouble().toString()
+        }else{
+            locationStr = ""
+            location_pinStr = ""
+            locationStr_lat = ""
+            locationStr_long = ""
+        }
 
-        et_addr.setText(locationStr)
-        et_pin.setText(location_pinStr)
         progress_wheel.stopSpinning()
 
         if((AppDatabase.getDBInstance()?.teamListDao()?.getAll() as ArrayList<TeamListEntity>).size==0){
@@ -347,7 +352,7 @@ class ContactsAddFrag : BaseFragment(), View.OnClickListener {
         }
 
 
-
+        progress_wheel.spin()
         Handler().postDelayed(Runnable {
             setData()
         }, 1500)
@@ -370,13 +375,13 @@ class ContactsAddFrag : BaseFragment(), View.OnClickListener {
         tv_assignTo.isEnabled = false*/
 
         if(!editShopID.equals("")){
-            (mContext as DashboardActivity).setTopBarTitle("Edit Contact")
+            (mContext as DashboardActivity).setTopBarTitle("Edit CRM")
             progress_wheel.spin()
             Handler().postDelayed(Runnable {
                 setEditData()
             }, 1500)
         }else{
-            (mContext as DashboardActivity).setTopBarTitle("Add Contact")
+            (mContext as DashboardActivity).setTopBarTitle("Add CRM")
         }
 
         if(AppUtils.isOnline(mContext)){
@@ -504,8 +509,8 @@ class ContactsAddFrag : BaseFragment(), View.OnClickListener {
         str_referenceID_type = shopObj.crm_reference_ID_type
         str_stageID = shopObj.crm_stage_ID
 
-        et_fName.isEnabled = false
-        et_lName.isEnabled = false
+       // et_fName.isEnabled = false
+       // et_lName.isEnabled = false
         //Code start by Puja
         //et_companyName.isEnabled = false
         //Code end by Puja
@@ -1161,20 +1166,33 @@ class ContactsAddFrag : BaseFragment(), View.OnClickListener {
                     }
                     val random = Random()
                     //shopObj.shop_id = editShopID
-                    //shopObj.shopName = et_fName.text.toString()+" "+et_lName.text.toString()
-                    //shopObj.ownerName = et_fName.text.toString()+" "+et_lName.text.toString()
-                    //shopObj.crm_firstName = et_fName.text.toString()
-                    //shopObj.crm_lastName = et_lName.text.toString()
+                    shopObj.shopName = et_fName.text.toString()+" "+et_lName.text.toString()
+                    shopObj.ownerName = et_fName.text.toString()+" "+et_lName.text.toString()
+                    shopObj.crm_firstName = et_fName.text.toString()
+                    shopObj.crm_lastName = et_lName.text.toString()
                     shopObj.companyName_id = str_companyId
                     shopObj.companyName = et_companyName.text.toString()
 
                     shopObj.jobTitle = et_jobTitle.text.toString()
                     shopObj.ownerEmailId = et_email.text.toString()
                     shopObj.ownerContactNumber = et_phone.text.toString()
-                    shopObj.address = et_addr.text.toString()
+
+                    if(Pref.ContactAddresswithGeofence){
+                        shopObj.address = if(et_addr.text.toString().trim().length==0) "NA" else et_addr.text.toString().trim()
+                        shopObj.pinCode = if(et_pin.text.toString().trim().length==0) "0" else et_pin.text.toString().trim()
+                        shopObj.shopLat = editContactDtls.shopLat//locationStr_lat.toDouble()
+                        shopObj.shopLong = editContactDtls.shopLong//locationStr_long.toDouble()
+                    }else{
+                        shopObj.address = if(et_addr.text.toString().trim().length==0) "NA" else et_addr.text.toString().trim()
+                        shopObj.pinCode = if(et_pin.text.toString().trim().length==0) "0" else et_pin.text.toString().trim()
+                        shopObj.shopLat = 0.0
+                        shopObj.shopLong = 0.0
+                    }
+
+                    /*shopObj.address = et_addr.text.toString()
                     shopObj.pinCode = et_pin.text.toString()
                     shopObj.shopLat = editContactDtls.shopLat//locationStr_lat.toDouble()
-                    shopObj.shopLong = editContactDtls.shopLong//locationStr_long.toDouble()
+                    shopObj.shopLong = editContactDtls.shopLong//locationStr_long.toDouble()*/
                     shopObj.crm_assignTo = if(tv_assignTo.text.toString().length == 0) Pref.user_name else tv_assignTo.text.toString()
                     shopObj.crm_assignTo_ID = str_assignToID
                     shopObj.crm_type = tv_type.text.toString()
@@ -1205,7 +1223,7 @@ class ContactsAddFrag : BaseFragment(), View.OnClickListener {
                     }
 
                     //AppDatabase.getDBInstance()!!.addShopEntryDao().insert(shopObj)
-                    AppDatabase.getDBInstance()!!.addShopEntryDao().updateContactDtls(shopObj.shop_id,shopObj.companyName_id,shopObj.companyName,shopObj.jobTitle,shopObj.ownerEmailId,shopObj.ownerContactNumber,
+                    AppDatabase.getDBInstance()!!.addShopEntryDao().updateContactDtls(shopObj.shop_id,shopObj.shopName,shopObj.ownerName,shopObj.crm_firstName,shopObj.crm_lastName,shopObj.companyName_id,shopObj.companyName,shopObj.jobTitle,shopObj.ownerEmailId,shopObj.ownerContactNumber,
                         shopObj.address,shopObj.pinCode,shopObj.shopLat,shopObj.shopLong,shopObj.crm_assignTo,shopObj.crm_assignTo_ID,shopObj.crm_type,shopObj.crm_type_ID,
                         shopObj.crm_status,shopObj.crm_source,shopObj.crm_source_ID,/*shopObj.crm_reference,*shopObj.crm_reference_ID,shopObj.crm_reference_ID_type,*/
                         shopObj.remarks,shopObj.amount,shopObj.crm_stage,shopObj.crm_stage_ID,shopObj.crm_reference,shopObj.crm_reference_ID,shopObj.crm_reference_ID_type,
@@ -1312,6 +1330,14 @@ class ContactsAddFrag : BaseFragment(), View.OnClickListener {
             progress_wheel.stopSpinning()
             return
         }*/
+
+        if(et_phone.text.toString().trim().length == 0){
+            et_phone.requestFocus()
+            et_phone.setError("Enter valid Phone No.")
+            progress_wheel.stopSpinning()
+            return
+        }
+
         if(et_phoneWhatsapp.text.toString().length!=0){
             if(et_phoneWhatsapp.text.toString().length!=10 || et_phoneWhatsapp.text.toString().equals("0000000000")){
                 et_phoneWhatsapp.requestFocus()
@@ -1328,7 +1354,8 @@ class ContactsAddFrag : BaseFragment(), View.OnClickListener {
         }
 
         if(!et_email.text.toString().equals("")){
-            if(!et_email.text.toString().contains("@")){
+            var f = AppUtils.isValidEmail(et_email.text.toString().trim())
+            if(!et_email.text.toString().contains("@") || !AppUtils.isValidEmail(et_email.text.toString().trim())){
                 et_email.requestFocus()
                 et_email.setError("Enter Valid Email.")
                 progress_wheel.stopSpinning()
@@ -1379,10 +1406,17 @@ class ContactsAddFrag : BaseFragment(), View.OnClickListener {
                     shopObj.jobTitle = et_jobTitle.text.toString()
                     shopObj.ownerEmailId = et_email.text.toString()
                     shopObj.ownerContactNumber = et_phone.text.toString()
-                    shopObj.address = et_addr.text.toString()
-                    shopObj.pinCode = et_pin.text.toString()
-                    shopObj.shopLat = locationStr_lat.toDouble()
-                    shopObj.shopLong = locationStr_long.toDouble()
+                    if(Pref.ContactAddresswithGeofence){
+                        shopObj.address = et_addr.text.toString()
+                        shopObj.pinCode = et_pin.text.toString()
+                        shopObj.shopLat = locationStr_lat.toDouble()
+                        shopObj.shopLong = locationStr_long.toDouble()
+                    }else{
+                        shopObj.address = if(et_addr.text.toString().trim().length == 0) "NA" else et_addr.text.toString()
+                        shopObj.pinCode = if(et_pin.text.toString().trim().length == 0) "0" else et_pin.text.toString()
+                        shopObj.shopLat = 0.0
+                        shopObj.shopLong = 0.0
+                    }
                     shopObj.crm_assignTo = if(tv_assignTo.text.toString().length == 0) Pref.user_name else tv_assignTo.text.toString()
                     shopObj.crm_assignTo_ID = str_assignToID
                     shopObj.crm_type = tv_type.text.toString()
@@ -1589,6 +1623,19 @@ class ContactsAddFrag : BaseFragment(), View.OnClickListener {
     }
 
     private fun setData(){
+        progress_wheel.stopSpinning()
+
+        if(editShopID.equals("")){
+            if(Pref.ContactAddresswithGeofence){
+                et_addr.setText(locationStr)
+                et_pin.setText(location_pinStr)
+            }else{
+                et_addr.setText("")
+                et_pin.setText("")
+            }
+        }
+
+
         var compL:ArrayList<CompanyMasterEntity> = AppDatabase.getDBInstance()?.companyMasterDao()?.getAll() as ArrayList<CompanyMasterEntity>
         adapterCompanyNameHint = AdapterContactCompany(mContext,compL,object :AdapterContactCompany.onClick{
             override fun onNameClick(obj: CompanyMasterEntity) {

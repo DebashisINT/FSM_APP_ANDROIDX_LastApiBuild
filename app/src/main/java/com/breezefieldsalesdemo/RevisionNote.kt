@@ -139,4 +139,6 @@ class RevisionNote {
     // 23.0  LoginActivity Automail details Suman 16-04-2024 mantis id 27368 v4.2.6
 
     // 4.0 AddQuotFormFragment  AppV 4.2.6 Suman    25/04/2024 save button multi click fix
+
+    // Suman 06-05-2024 Suman SyncActivity update mantis 27335
 }

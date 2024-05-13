@@ -515,12 +515,12 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
         val jsonObjectRequest: JsonObjectRequest = object : JsonObjectRequest("https://graph.facebook.com/v18.0/109092662037205/messages", jsonObject,
             object : Response.Listener<JSONObject?> {
                 override fun onResponse(response: JSONObject?) {
-                    Toast.makeText(mContext, ""+response, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(mContext, ""+response, Toast.LENGTH_LONG).show()
                 }
             },
             object : Response.ErrorListener {
                 override fun onErrorResponse(error: VolleyError?) {
-                    Toast.makeText(mContext, ""+error.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(mContext, ""+error.toString(), Toast.LENGTH_LONG).show()
                 }
             }) {
             @Throws(AuthFailureError::class)
@@ -778,7 +778,7 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
                         //contGrDialog!!.dismiss()
 
                     }else{
-                        Toaster.msgShort(mContext,"No contact avaliable")
+                        Toaster.msgShort(mContext,"No CRM avaliable")
                     }
                 }else{
                     Handler().postDelayed(Runnable {
@@ -787,7 +787,7 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
                         simpleDialog.getWindow()!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                         simpleDialog.setContentView(R.layout.dialog_ok)
                         val dialogHeader = simpleDialog.findViewById(R.id.dialog_yes_header_TV) as AppCustomTextView
-                        dialogHeader.text = "No contact is pending for sync!"
+                        dialogHeader.text = "No CRM is pending for sync!"
                         val dialogYes = simpleDialog.findViewById(R.id.tv_dialog_yes) as AppCustomTextView
                         dialogYes.setOnClickListener({ view ->
                             simpleDialog.cancel()
@@ -943,7 +943,7 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
                         println("tag_conta_show ${contL.get(i).ownerName} ${contL.get(i).isUploaded}")
                     }
                     tvNodata.visibility = View.GONE
-                    (mContext as DashboardActivity).setTopBarTitle("Contact(s) : ${contL.size}")
+                    (mContext as DashboardActivity).setTopBarTitle("CRM : ${contL.size}")
                     adapterContactList = AdapterContactList(mContext,contL,et_search.text.toString(),object :AdapterContactList.onClick{
                         override fun onCallClick(obj: AddShopDBModelEntity) {
                             IntentActionable.initiatePhoneCall(mContext, obj.ownerContactNumber)
@@ -1037,7 +1037,7 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
                                     syncContact(obj)
                                 }, 1900)
                             }else{
-                                (this as DashboardActivity).showSnackMessage(getString(R.string.no_internet))
+                                (mContext as DashboardActivity).showSnackMessage(getString(R.string.no_internet))
                             }
                         }
                         override fun onEditClick(obj: AddShopDBModelEntity) {
@@ -1103,8 +1103,11 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
                         }
 
                         override fun onActivityClick(obj: AddShopDBModelEntity) {
-                            (mContext as DashboardActivity).isFromMenu = false
-                            (mContext as DashboardActivity).loadFragment(FragType.AddActivityFragment, true, obj)
+
+                            (mContext as DashboardActivity).loadFragment(FragType.ActivityDtlsFrag, true, obj.shop_id)
+
+                            //(mContext as DashboardActivity).isFromMenu = false
+                            //(mContext as DashboardActivity).loadFragment(FragType.AddActivityFragment, true, obj)
                         }
 
                         override fun onUpdateAddrClick(obj: AddShopDBModelEntity) {
@@ -1115,18 +1118,27 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
                                 (mContext as DashboardActivity).showSnackMessage(getString(R.string.something_went_wrong))
                             }
                         }
+                        override fun onOrderClick(obj: AddShopDBModelEntity) {
+                            if(Pref.IsActivateNewOrderScreenwithSize){
+                                (mContext as DashboardActivity).loadFragment(FragType.NewOrderScrOrderDetailsFragment, true, obj.shop_id)
+                            }else{
+                                (mContext as DashboardActivity).loadFragment(FragType.ViewAllOrderListFragment, true, obj)
+                            }
+                        }
+
                     })
                     rvContactL.adapter = adapterContactList
                     rvContactL.visibility = View.VISIBLE
                     ll_no_data_root.visibility = View.GONE
 
-                }else{
-                    (mContext as DashboardActivity).setTopBarTitle("Contact(s)")
+                }
+                else{
+                    (mContext as DashboardActivity).setTopBarTitle("CRM")
                     //  tvNodata.visibility = View.VISIBLE
                     rvContactL.visibility = View.GONE
                     ll_no_data_root.visibility = View.VISIBLE
-                    tv_empty_page_msg_head.text = "No Contacts Found"
-                    tv_empty_page_msg.text = "Click + to add your Contacts"
+                    tv_empty_page_msg_head.text = "No CRM Found"
+                    tv_empty_page_msg.text = "Click + to add your CRM"
                     img_direction.animate().rotationY(180F).start()
                 }
             }
@@ -1630,9 +1642,11 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
                         if(isFromSyncAll){
                             if(isFromSyncAllLast){
                                     showMsg("Sync Successfully done. Thanks.")
+                                    voiceMsg("Sync Successfully done. Thanks.")
                             }
                         }else{
                                 showMsg("Sync Successfully done. Thanks.")
+                            voiceMsg("Sync Successfully done. Thanks.")
                         }
                     }
                     else {
@@ -2117,7 +2131,7 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
             }
             uiThread {
                 progress_wheel.stopSpinning()
-                Toaster.msgShort(mContext,"Contact data refreshed successfully.")
+                Toaster.msgShort(mContext,"CRM data refreshed successfully.")
                 shopContactList("")
             }
         }
@@ -2275,7 +2289,7 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
     fun generateContactDtlsPdf(shopObj:AddShopDBModelEntity){
         var document: Document = Document(PageSize.A4, 36f, 36f, 36f, 80f)
         val time = System.currentTimeMillis()
-        var fileName = "Contact" +  "_" + time
+        var fileName = "CRM" +  "_" + time
         val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()+"/FSMApp/CallHis/"
 
         var pathNew = ""
@@ -2330,7 +2344,7 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
             para.indentationLeft = 220f
             val glue = Chunk(VerticalPositionMark())
             val ph = Phrase()
-            ph.add(Chunk("Contact Details", fontBoldUHeader))
+            ph.add(Chunk("CRM Details", fontBoldUHeader))
             ph.add(glue)
             ph.add(Chunk("DATE: " + AppUtils.getCurrentDate_DD_MM_YYYY() + " ", font1))
             para.add(ph)
@@ -2473,7 +2487,7 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
         simpleDialog.getWindow()!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         simpleDialog.setContentView(R.layout.dialog_ok)
         val dialogHeader = simpleDialog.findViewById(R.id.dialog_yes_header_TV) as AppCustomTextView
-        dialogHeader.text = "Contact auto activity set for ${AppUtils.getFormatedDateNew(selectedDate,"yyyy-mm-dd","dd-mm-yyyy")} is successful."
+        dialogHeader.text = "CRM auto activity set for ${AppUtils.getFormatedDateNew(selectedDate,"yyyy-mm-dd","dd-mm-yyyy")} is successful."
         val dialogYes = simpleDialog.findViewById(R.id.tv_dialog_yes) as AppCustomTextView
         dialogYes.setOnClickListener({ view ->
             simpleDialog.cancel()
@@ -2487,10 +2501,10 @@ class ContactsFrag : BaseFragment(), View.OnClickListener {
         try {
             var contL : ArrayList<AddShopDBModelEntity> = ArrayList()
             contL = AppDatabase.getDBInstance()!!.addShopEntryDao().getContatcShops() as ArrayList<AddShopDBModelEntity>
-            (mContext as DashboardActivity).setTopBarTitle("Contact(s) : ${contL.size}")
+            (mContext as DashboardActivity).setTopBarTitle("CRM : ${contL.size}")
         }catch (ex:Exception){
             ex.printStackTrace()
-            (mContext as DashboardActivity).setTopBarTitle("Contact(s)")
+            (mContext as DashboardActivity).setTopBarTitle("CRM")
         }
     }
 
