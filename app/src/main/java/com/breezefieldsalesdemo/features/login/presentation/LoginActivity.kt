@@ -28,6 +28,7 @@ import android.view.animation.TranslateAnimation
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.FileProvider
@@ -288,8 +289,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LocationListener {
         mContext = this@LoginActivity
         println("xyz - login oncreate started" + AppUtils.getCurrentDateTime());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            initPermissionCheck()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            //initPermissionCheck()
+            showCallLogProminentDisclosure()
+        }
         else
             getIMEI()
 
@@ -3626,6 +3629,135 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LocationListener {
                             //sam
                             getCurrentStockApi()
                         })
+        )
+    }
+
+    private lateinit var callDiscloserDialog : Dialog
+
+    fun showCallLogProminentDisclosure(){
+        if(Pref.isCallLogHintPermissionGranted){
+            initPermissionCheck()
+        }else{
+            callDiscloserDialog = Dialog(this)
+            callDiscloserDialog.setCancelable(false)
+            callDiscloserDialog.getWindow()!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            callDiscloserDialog.setContentView(R.layout.dialog_call_log)
+
+            var tv_body = callDiscloserDialog.findViewById(R.id.tv_call_log_body) as TextView
+            var tv_ok = callDiscloserDialog.findViewById(R.id.tv_dialog_call_log_ok) as AppCustomTextView
+            val tv_not_ok = callDiscloserDialog.findViewById(R.id.tv_dialog_call_log_not_ok) as AppCustomTextView
+            tv_body.text = "In order to generate business report for CRM need to access " +
+                    "call logs and to add contact into app need to access Phone Contact also to make " +
+                    "phone calls for parties. Allow app to get call logs, contacts and make phone " +
+                    "calls?"
+
+            tv_ok.setOnClickListener {
+                if (Pref.isCallLogHintPermissionGranted == false){
+                    Pref.isCallLogHintPermissionGranted = true
+                    initPermissionCheckCall()
+                }
+            }
+            tv_not_ok.setOnClickListener {
+                callDiscloserDialog.dismiss()
+                initPermissionCheckAdv()
+            }
+
+            callDiscloserDialog.show()
+
+            /* CallLogPermissionDialog.newInstance(object : CallLogPermissionDialog.OnItemSelectedListener {
+                 override fun onOkClick() {
+                     if (Pref.isCallLogHintPermissionGranted == false){
+                         Pref.isCallLogHintPermissionGranted = true
+                         initPermissionCheck()
+                     }
+                 }
+
+                 override fun onCrossClick() {
+                     initPermissionCheck()
+                 }
+             }).show(supportFragmentManager, "")*/
+        }
+
+    }
+
+    private fun initPermissionCheckCall(){
+        var permissionList = arrayOf<String>(Manifest.permission.READ_PHONE_STATE,)
+        permissionList+=Manifest.permission.READ_CALL_LOG
+        permissionList+=Manifest.permission.READ_CONTACTS
+        permissionList+=Manifest.permission.WRITE_CALL_LOG
+
+        permissionUtils = PermissionUtils(this, object : PermissionUtils.OnPermissionListener {
+            @TargetApi(Build.VERSION_CODES.M)
+            override fun onPermissionGranted() {
+                initPermissionCheckAdv()
+            }
+            override fun onPermissionNotGranted() {
+                initPermissionCheckAdv()
+            }
+        },permissionList)
+    }
+
+    private fun initPermissionCheckAdv() {
+        callDiscloserDialog.dismiss()
+        //begin mantis id 26741 Storage permission updation Suman 22-08-2023
+        var permissionList = arrayOf<String>( Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            permissionList += Manifest.permission.READ_MEDIA_IMAGES
+            permissionList += Manifest.permission.READ_MEDIA_AUDIO
+            permissionList += Manifest.permission.READ_MEDIA_VIDEO
+            permissionList += Manifest.permission.POST_NOTIFICATIONS
+        }else{
+            permissionList += Manifest.permission.WRITE_EXTERNAL_STORAGE
+            permissionList += Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+//end mantis id 26741 Storage permission updation Suman 22-08-2023
+        permissionUtils = PermissionUtils(this, object : PermissionUtils.OnPermissionListener {
+            @TargetApi(Build.VERSION_CODES.M)
+            override fun onPermissionGranted() {
+                getIMEI()
+
+                /*if(Build.VERSION.SDK_INT>=30){
+                    if (!Environment.isExternalStorageManager()){
+                        fileManagePermii()
+                    }else{
+                        Handler().postDelayed(Runnable {
+                            if (!Settings.canDrawOverlays(this@LoginActivity)) {
+                                getOverlayPermission()
+                            }
+                        }, 1000)
+                    }
+                }else{*/
+                Handler().postDelayed(Runnable {
+                    try{
+                        if (!Settings.canDrawOverlays(this@LoginActivity)) {
+                            getOverlayPermission()
+                        }
+                    }catch (ex:java.lang.Exception){
+                        ex.printStackTrace()
+                    }
+                }, 1000)
+                //}
+
+
+            }
+
+            override fun onPermissionNotGranted() {
+                //AppUtils.showButtonSnackBar(this@SplashActivity, rl_splash_main, getString(R.string.error_loc_permission_request_msg))
+                showSnackMessage(getString(R.string.accept_permission))
+                /*Handler().postDelayed(Runnable {
+                    finish()
+                    System.exit(0)
+                },3000)*/
+            }
+// mantis id 26741 Storage permission updation Suman 22-08-2023
+        },permissionList /*arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE, Manifest.permission.RECORD_AUDIO,
+
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_AUDIO,
+            Manifest.permission.READ_MEDIA_VIDEO
+
+            )*/
+
         )
     }
 

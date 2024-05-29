@@ -78,6 +78,8 @@ class SplashActivity : BaseActivity(), GpsStatusDetector.GpsStatusDetectorCallBa
     var permListDenied = mutableListOf<PermissionDetails>()
     data class PermissionDetails(var permissionName: String, var permissionTag: Int)
 
+    private lateinit var locDiscloserDialog : Dialog
+
 //test
     @SuppressLint("SuspiciousIndentation", "WrongConstant")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -137,7 +139,7 @@ class SplashActivity : BaseActivity(), GpsStatusDetector.GpsStatusDetectorCallBa
             if (Pref.isLocationPermissionGranted)
                 initPermissionCheck()
             else {
-                LocationPermissionDialog.newInstance(object : LocationPermissionDialog.OnItemSelectedListener {
+                /*LocationPermissionDialog.newInstance(object : LocationPermissionDialog.OnItemSelectedListener {
                     override fun onOkClick() {
                         //initPermissionCheck()
 
@@ -151,7 +153,36 @@ class SplashActivity : BaseActivity(), GpsStatusDetector.GpsStatusDetectorCallBa
                     override fun onCrossClick() {
                         finish()
                     }
-                }).show(supportFragmentManager, "")
+                }).show(supportFragmentManager, "")*/
+
+                locDiscloserDialog = Dialog(this)
+                locDiscloserDialog.setCancelable(false)
+                locDiscloserDialog.getWindow()!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                locDiscloserDialog.setContentView(R.layout.dialog_loc)
+
+                val tv_body = locDiscloserDialog.findViewById(R.id.tv_loc_dialog_body) as AppCustomTextView
+                var tv_ok = locDiscloserDialog.findViewById(R.id.tv_loc_dialog_ok) as AppCustomTextView
+                val tv_not_ok = locDiscloserDialog.findViewById(R.id.tv_loc_dialog_not_ok) as AppCustomTextView
+                var appN ="This"
+                try {
+                    appN = this.getResources().getString(R.string.app_name)
+                } catch (e: Exception) {
+                    TODO("Not yet implemented")
+                }
+                tv_body.text = "$appN App collects location data after you open and " +
+                        "login into the App, to identify nearby Parties location even when the app is " +
+                        "running in the background and not in use. This app collects location data to " +
+                        "enable nearby shops, GPS route, even when the app is closed or not in use. " +
+                        "Reimbursement is issued with distance travelled for specific GPS route. This is " +
+                        "a core functionality of this app."
+
+                tv_ok.setOnClickListener {
+                    initPermissionCheck()
+                }
+                tv_not_ok.setOnClickListener {
+                    finish()
+                }
+                locDiscloserDialog.show()
             }
         else {
             checkGPSProvider()
@@ -310,6 +341,11 @@ class SplashActivity : BaseActivity(), GpsStatusDetector.GpsStatusDetectorCallBa
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun checkGPSProvider() {
+        try {
+            locDiscloserDialog.dismiss()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         val manager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (manager.isProviderEnabled(LocationManager.GPS_PROVIDER) /*&& PermissionHelper.checkLocationPermission(this, 0)*/) {
             checkGPSAvailability()

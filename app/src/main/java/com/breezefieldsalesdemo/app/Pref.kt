@@ -1037,6 +1037,8 @@ object Pref : PreferenceHolder() {
     var firebase_k : String by bindToPreferenceField("", "firebase_k")
     //end mantis id 0027432 loc_k & firebase_k functionality Puja 08-05-2024 v4.2.7
     var IsRouteUpdateForShopUser : Boolean by bindToPreferenceField(true, "IsRouteUpdateForShopUser")
+
+    var isCallLogHintPermissionGranted: Boolean by bindToPreferenceField(false, "isCallLogHintPermissionGranted")
 }
 
 

@@ -31,6 +31,10 @@
     <string name="login_net_disconnected1" translatable="false">Please switch on the internet.</string>
     <string name="remember_me" translatable="false">Remember me</string>
 
+    <string name="loc_msg_new_new" translatable="false">Field Sales Management App collects location data after you open and login into the App, to identify nearby Parties location even when the app is running in the background and not in use.This app collects location data to enable nearby shops, GPS route,
+ even when the app is closed or not in use.Reimbursement is issued with distance traveled for specific GPS route.
+ \nThis is a core functionality of this app.</string>
+
     <!--Menu-->
     <string name="add_order" translatable="false">Add Order</string>
     <string name="photo_registration" translatable="false">Photo Registration</string>
