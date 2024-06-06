@@ -215,6 +215,14 @@ class AvgTimeSpentListAdapter(context: Context, list: List<ShopActivityEntity>, 
                     (context as DashboardActivity).loadFragment(FragType.ViewAllOrderListFragment, true, shop!!)
                 }
 
+                if (Pref.willActivityShow) {
+                    itemView.ll_activity.visibility = View.VISIBLE
+                    itemView.activity_view.visibility = View.VISIBLE
+                }else{
+                    itemView.ll_activity.visibility = View.GONE
+                    itemView.activity_view.visibility = View.GONE
+                }
+
                 itemView.ll_activity.setOnClickListener {
                     when (shop?.type) {
                         "7" -> {
